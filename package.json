@@ -1,25 +1,42 @@
 {
-  "name": "accessilis-web",
-  "version": "0.1.0",
+  "name": "accessly",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "lint:strict": "eslint src --max-warnings=0",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write .",
+    "analyze": "ANALYZE=true next build",
+    "prepare": "husky"
   },
   "dependencies": {
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "next": "15.3.1"
+    "@picovoice/porcupine-web": "^3.0.3",
+    "@picovoice/web-voice-processor": "^4.0.9",
+    "@supabase/supabase-js": "^2.81.1",
+    "@types/mapbox-gl": "^3.4.1",
+    "@types/three": "^0.181.0",
+    "lucide-react": "^0.553.0",
+    "mapbox-gl": "^3.16.0",
+    "next": "14.1.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "three": "^0.181.1"
   },
   "devDependencies": {
-    "typescript": "^5",
-    "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
-    "eslint": "^9",
-    "eslint-config-next": "15.3.1",
-    "@eslint/eslintrc": "^3"
+    "@eslint/js": "^9.39.1",
+    "@next/bundle-analyzer": "^14.1.0",
+    "@types/react": "19.2.3",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^14.2.33",
+    "eslint-config-prettier": "^9.1.2",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
+    "prettier": "^3.2.5",
+    "typescript-eslint": "^8.46.4"
   }
 }

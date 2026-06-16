@@ -1,0 +1,46 @@
+"use client";
+
+import { useState } from "react";
+import { FaHeart } from "react-icons/fa";
+import { doc, updateDoc, increment } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
+interface Props {
+  initialCount: number;
+  commentId: string;
+  reviewId: string;
+}
+
+export default function LikeButton({ initialCount, commentId, reviewId }: Props) {
+  const [likes, setLikes] = useState(initialCount);
+  const [liked, setLiked] = useState(false);
+
+  const handleLike = async () => {
+    if (liked) return;
+
+    try {
+      const commentRef = doc(db, "reviews", reviewId, "comments", commentId);
+      await updateDoc(commentRef, {
+        likes: increment(1),
+      });
+
+      setLikes((prev) => prev + 1);
+      setLiked(true);
+    } catch (error) {
+      console.error("Error liking comment:", error);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleLike}
+      disabled={liked}
+      className={`flex items-center gap-1 text-red-500 ${
+        liked ? "opacity-50" : "hover:opacity-75"
+      }`}
+    >
+      <FaHeart className="text-xs" />
+      <span>{likes}</span>
+    </button>
+  );
+}

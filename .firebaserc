@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "default": "accey-fresh-vctr360",
+    "accessly": "accey-app"
+  },
+  "targets": {},
+  "etags": {}
+}

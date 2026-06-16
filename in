@@ -1,0 +1,9 @@
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "@/lib/firebase";
+
+await addDoc(collection(db, "ai_logs"), {
+  type: "scan",
+  context,
+  timestamp: new Date().toISOString(),
+  issues: result.issues,
+});

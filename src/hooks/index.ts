@@ -1,0 +1,27 @@
+export { default as useVoiceNav } from "./useVoiceNav";
+export { default as useVoiceCommands } from "./useVoiceCommands";
+export { default as useConversationalAI } from "./useConversationalAI";
+export { default as useAIContextMemory } from "./useAIContextMemory";
+export { default as useLiveLocation } from "./useLiveLocation";
+export { default as useNearbyAccessiblePlaces } from "./useNearbyAccessiblePlaces";
+export { default as useProximityFeedback } from "./useProximityFeedback";
+export { default as useMapTheme } from "./useMapTheme";
+export { default as useDeviceSensors } from "./useDeviceSensors";
+export { default as useAdaptiveVoice } from "./useAdaptiveVoice";
+export { default as useEnvironmentAwareness } from "./useEnvironmentAwareness";
+export { default as useEmotionDetection } from "./useEmotionDetection";
+export { default as useUserMemory } from "./useUserMemory";
+export { default as useAdaptivePersonality } from "./useAdaptivePersonality";
+export { default as useUserProfile } from "./useUserProfile";
+export { default as useOfflineRecovery } from "./useOfflineRecovery";
+export { default as useObstacleAvoidance } from "./useObstacleAvoidance";
+export { default as usePathPrediction } from "./usePathPrediction";
+export { default as useSafetyDetection } from "./useSafetyDetection";
+// AI & SaaS
+export { default as useAIScan } from "./useAIScan";
+export { default as useAIReport } from "./useAIReport";
+export { default as useAIAnalytics } from "./useAIAnalytics";
+export { default as useAIInsights } from "./useAIInsights";
+export { default as useAIAssist } from "./useAIAssist";
+export { default as useAIAssistant } from "./useAIAssistant";
+export { default as useChatbot } from "./useChatbot";
