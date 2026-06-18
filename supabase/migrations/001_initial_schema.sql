@@ -1,8 +1,40 @@
 -- ============================================================
--- Accessana — initial schema
+-- Accessana — initial schema (idempotent)
+-- Safe to run on a fresh project OR one that already has
+-- partial Accessana objects — drops everything first.
+--
 -- Apply via: Supabase dashboard > SQL Editor > run this file
--- Or: supabase db push (once CLI is configured)
 -- ============================================================
+
+-- ── Tear-down (safe to run on any state) ────────────────────
+
+-- Drop the auth trigger first (lives on auth.users, not a
+-- public table, so won't be caught by the table drops below).
+drop trigger if exists on_auth_user_created on auth.users;
+
+-- Drop all public tables in reverse dependency order.
+-- CASCADE removes any remaining triggers, indexes, and policies.
+drop table if exists public.outings              cascade;
+drop table if exists public.cities               cascade;
+drop table if exists public.civic_reports        cascade;
+drop table if exists public.businesses           cascade;
+drop table if exists public.venue_change_reports cascade;
+drop table if exists public.reviews              cascade;
+drop table if exists public.venues               cascade;
+drop table if exists public.users                cascade;
+
+-- Drop helper functions.
+drop function if exists public.increment_user_review_count(uuid)  cascade;
+drop function if exists public.increment_venue_review_count(uuid) cascade;
+drop function if exists public.handle_new_user()                  cascade;
+drop function if exists public.set_updated_at()                   cascade;
+
+-- Drop enums (CASCADE in case anything still references them).
+drop type if exists civic_report_type cascade;
+drop type if exists civic_status      cascade;
+drop type if exists subscription_plan cascade;
+drop type if exists venue_category    cascade;
+drop type if exists disability_type   cascade;
 
 -- ── Extensions ──────────────────────────────────────────────
 create extension if not exists "uuid-ossp";
@@ -30,7 +62,7 @@ create type civic_report_type as enum (
   'inaccessible_parking', 'other'
 );
 
--- ── updated_at trigger ───────────────────────────────────────
+-- ── updated_at trigger function ──────────────────────────────
 create or replace function public.set_updated_at()
 returns trigger as $$
 begin
@@ -43,25 +75,25 @@ $$ language plpgsql;
 
 -- USERS (extends auth.users)
 create table public.users (
-  id                uuid references auth.users(id) on delete cascade primary key,
-  display_name      text,
-  avatar_url        text,
-  disability_types  disability_type[] default '{}',
+  id                 uuid references auth.users(id) on delete cascade primary key,
+  display_name       text,
+  avatar_url         text,
+  disability_types   disability_type[] default '{}',
   preferred_language text default 'en',
-  reputation_score  integer default 0,
-  review_count      integer default 0,
-  saved_venues      uuid[] default '{}',
-  plan              subscription_plan default 'free',
+  reputation_score   integer default 0,
+  review_count       integer default 0,
+  saved_venues       uuid[] default '{}',
+  plan               subscription_plan default 'free',
   stripe_customer_id text,
-  created_at        timestamptz default now(),
-  updated_at        timestamptz default now()
+  created_at         timestamptz default now(),
+  updated_at         timestamptz default now()
 );
 
 create trigger users_updated_at
   before update on public.users
   for each row execute function public.set_updated_at();
 
--- Auto-create profile row when a new auth user signs up
+-- Auto-create a profile row when a new auth user signs up.
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
@@ -78,37 +110,37 @@ create trigger on_auth_user_created
 
 -- VENUES
 create table public.venues (
-  id                uuid default uuid_generate_v4() primary key,
-  name              text not null,
-  category          venue_category not null,
-  address           text,
-  city              text,
-  state             text,
-  country           text default 'US',
-  location          geography(point, 4326),
-  phone             text,
-  website           text,
-  google_place_id   text unique,
-  osm_id            text,
-  access_index      numeric(4,1),
-  score_entrance    numeric(4,1),
-  score_bathrooms   numeric(4,1),
-  score_parking     numeric(4,1),
-  score_staff       numeric(4,1),
-  score_sensory     numeric(4,1),
-  review_count      integer default 0,
-  claimed           boolean default false,
-  claimed_by        uuid references public.users(id),
-  verified          boolean default false,
-  certified         boolean default false,
-  photos            text[] default '{}',
-  created_at        timestamptz default now(),
-  updated_at        timestamptz default now()
+  id               uuid default uuid_generate_v4() primary key,
+  name             text not null,
+  category         venue_category not null,
+  address          text,
+  city             text,
+  state            text,
+  country          text default 'US',
+  location         geography(point, 4326),
+  phone            text,
+  website          text,
+  google_place_id  text unique,
+  osm_id           text,
+  access_index     numeric(4,1),
+  score_entrance   numeric(4,1),
+  score_bathrooms  numeric(4,1),
+  score_parking    numeric(4,1),
+  score_staff      numeric(4,1),
+  score_sensory    numeric(4,1),
+  review_count     integer default 0,
+  claimed          boolean default false,
+  claimed_by       uuid references public.users(id),
+  verified         boolean default false,
+  certified        boolean default false,
+  photos           text[] default '{}',
+  created_at       timestamptz default now(),
+  updated_at       timestamptz default now()
 );
 
-create index venues_location_idx  on public.venues using gist(location);
-create index venues_city_idx      on public.venues(city);
-create index venues_category_idx  on public.venues(category);
+create index venues_location_idx on public.venues using gist(location);
+create index venues_city_idx     on public.venues(city);
+create index venues_category_idx on public.venues(category);
 
 create trigger venues_updated_at
   before update on public.venues
@@ -116,35 +148,35 @@ create trigger venues_updated_at
 
 -- REVIEWS
 create table public.reviews (
-  id                uuid default uuid_generate_v4() primary key,
-  venue_id          uuid references public.venues(id) on delete cascade not null,
-  user_id           uuid references public.users(id)  on delete cascade not null,
-  disability_types  disability_type[] not null default '{}',
-  score_entrance    integer check (score_entrance between 1 and 5),
-  score_bathrooms   integer check (score_bathrooms between 1 and 5),
-  score_parking     integer check (score_parking between 1 and 5),
-  score_staff       integer check (score_staff between 1 and 5),
-  score_sensory     integer check (score_sensory between 1 and 5),
-  note_entrance     text,
-  note_bathrooms    text,
-  note_parking      text,
-  note_staff        text,
-  note_sensory      text,
-  photos_entrance   text[] default '{}',
-  photos_bathrooms  text[] default '{}',
-  photos_parking    text[] default '{}',
-  photos_staff      text[] default '{}',
-  photos_sensory    text[] default '{}',
-  overall_comment   text,
-  visit_date        date,
-  helpful_count     integer default 0,
-  created_at        timestamptz default now(),
-  updated_at        timestamptz default now(),
+  id               uuid default uuid_generate_v4() primary key,
+  venue_id         uuid references public.venues(id) on delete cascade not null,
+  user_id          uuid references public.users(id)  on delete cascade not null,
+  disability_types disability_type[] not null default '{}',
+  score_entrance   integer check (score_entrance between 1 and 5),
+  score_bathrooms  integer check (score_bathrooms between 1 and 5),
+  score_parking    integer check (score_parking between 1 and 5),
+  score_staff      integer check (score_staff between 1 and 5),
+  score_sensory    integer check (score_sensory between 1 and 5),
+  note_entrance    text,
+  note_bathrooms   text,
+  note_parking     text,
+  note_staff       text,
+  note_sensory     text,
+  photos_entrance  text[] default '{}',
+  photos_bathrooms text[] default '{}',
+  photos_parking   text[] default '{}',
+  photos_staff     text[] default '{}',
+  photos_sensory   text[] default '{}',
+  overall_comment  text,
+  visit_date       date,
+  helpful_count    integer default 0,
+  created_at       timestamptz default now(),
+  updated_at       timestamptz default now(),
   unique (venue_id, user_id, visit_date)
 );
 
-create index reviews_venue_id_idx  on public.reviews(venue_id);
-create index reviews_user_id_idx   on public.reviews(user_id);
+create index reviews_venue_id_idx   on public.reviews(venue_id);
+create index reviews_user_id_idx    on public.reviews(user_id);
 create index reviews_created_at_idx on public.reviews(created_at desc);
 
 create trigger reviews_updated_at
@@ -184,23 +216,23 @@ create trigger businesses_updated_at
 
 -- CIVIC REPORTS
 create table public.civic_reports (
-  id                  uuid default uuid_generate_v4() primary key,
-  user_id             uuid references public.users(id) on delete cascade not null,
-  report_type         civic_report_type not null,
-  description         text not null,
-  location            geography(point, 4326) not null,
-  address             text,
-  city                text,
-  state               text,
-  photos              text[] default '{}',
-  status              civic_status default 'open',
-  upvote_count        integer default 0,
-  seeclickfix_id      text,
-  doj_reference       text,
-  city_311_reference  text,
-  resolved_at         timestamptz,
-  created_at          timestamptz default now(),
-  updated_at          timestamptz default now()
+  id                 uuid default uuid_generate_v4() primary key,
+  user_id            uuid references public.users(id) on delete cascade not null,
+  report_type        civic_report_type not null,
+  description        text not null,
+  location           geography(point, 4326) not null,
+  address            text,
+  city               text,
+  state              text,
+  photos             text[] default '{}',
+  status             civic_status default 'open',
+  upvote_count       integer default 0,
+  seeclickfix_id     text,
+  doj_reference      text,
+  city_311_reference text,
+  resolved_at        timestamptz,
+  created_at         timestamptz default now(),
+  updated_at         timestamptz default now()
 );
 
 create index civic_reports_location_idx on public.civic_reports using gist(location);
@@ -213,19 +245,19 @@ create trigger civic_reports_updated_at
 
 -- CITIES
 create table public.cities (
-  id                   uuid default uuid_generate_v4() primary key,
-  name                 text not null,
-  state                text,
-  country              text default 'US',
-  access_index         numeric(4,1),
-  open_reports         integer default 0,
-  resolved_reports     integer default 0,
-  avg_response_days    numeric(5,1),
-  seeclickfix_area_id  text,
-  api_311_endpoint     text,
-  plan                 subscription_plan default 'free',
-  created_at           timestamptz default now(),
-  updated_at           timestamptz default now()
+  id                  uuid default uuid_generate_v4() primary key,
+  name                text not null,
+  state               text,
+  country             text default 'US',
+  access_index        numeric(4,1),
+  open_reports        integer default 0,
+  resolved_reports    integer default 0,
+  avg_response_days   numeric(5,1),
+  seeclickfix_area_id text,
+  api_311_endpoint    text,
+  plan                subscription_plan default 'free',
+  created_at          timestamptz default now(),
+  updated_at          timestamptz default now()
 );
 
 create trigger cities_updated_at
@@ -247,14 +279,14 @@ create table public.outings (
 create index outings_user_id_idx on public.outings(user_id);
 
 -- ── Row Level Security ───────────────────────────────────────
-alter table public.users               enable row level security;
-alter table public.venues              enable row level security;
-alter table public.reviews             enable row level security;
+alter table public.users                enable row level security;
+alter table public.venues               enable row level security;
+alter table public.reviews              enable row level security;
 alter table public.venue_change_reports enable row level security;
-alter table public.businesses          enable row level security;
-alter table public.civic_reports       enable row level security;
-alter table public.cities              enable row level security;
-alter table public.outings             enable row level security;
+alter table public.businesses           enable row level security;
+alter table public.civic_reports        enable row level security;
+alter table public.cities               enable row level security;
+alter table public.outings              enable row level security;
 
 -- Users
 create policy "Users can read own profile"
@@ -310,9 +342,7 @@ create policy "Users can read own or public outings"
 create policy "Users can manage own outings"
   on public.outings for all using (auth.uid() = user_id);
 
--- ── Helper RPCs for atomic counter increments ────────────────────────────
--- Called from the reviews API route after a new review is inserted.
-
+-- ── Helper RPCs (atomic counter increments) ──────────────────
 create or replace function public.increment_venue_review_count(venue_id uuid)
 returns void as $$
   update public.venues
