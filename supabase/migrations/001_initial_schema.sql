@@ -1,19 +1,12 @@
 -- ============================================================
--- Accessana — initial schema (idempotent)
--- Safe to run on a fresh project OR one that already has
--- partial Accessana objects — drops everything first.
---
--- Apply via: Supabase dashboard > SQL Editor > run this file
+-- Accessana — initial schema
+-- Idempotent: drops everything first, then rebuilds from scratch.
+-- Safe to run on a brand-new project or one with partial objects.
 -- ============================================================
 
--- ── Tear-down (safe to run on any state) ────────────────────
+-- ── Drop tables (CASCADE removes dependent triggers, indexes,
+--    policies, and foreign key constraints automatically) ─────
 
--- Drop the auth trigger first (lives on auth.users, not a
--- public table, so won't be caught by the table drops below).
-drop trigger if exists on_auth_user_created on auth.users;
-
--- Drop all public tables in reverse dependency order.
--- CASCADE removes any remaining triggers, indexes, and policies.
 drop table if exists public.outings              cascade;
 drop table if exists public.cities               cascade;
 drop table if exists public.civic_reports        cascade;
@@ -23,24 +16,28 @@ drop table if exists public.reviews              cascade;
 drop table if exists public.venues               cascade;
 drop table if exists public.users                cascade;
 
--- Drop helper functions.
+-- ── Drop functions ───────────────────────────────────────────
+
 drop function if exists public.increment_user_review_count(uuid)  cascade;
 drop function if exists public.increment_venue_review_count(uuid) cascade;
 drop function if exists public.handle_new_user()                  cascade;
 drop function if exists public.set_updated_at()                   cascade;
 
--- Drop enums (CASCADE in case anything still references them).
-drop type if exists civic_report_type cascade;
-drop type if exists civic_status      cascade;
-drop type if exists subscription_plan cascade;
-drop type if exists venue_category    cascade;
+-- ── Drop custom types ────────────────────────────────────────
+
 drop type if exists disability_type   cascade;
+drop type if exists venue_category    cascade;
+drop type if exists subscription_plan cascade;
+drop type if exists civic_status      cascade;
+drop type if exists civic_report_type cascade;
 
 -- ── Extensions ──────────────────────────────────────────────
+
 create extension if not exists "uuid-ossp";
 create extension if not exists "postgis";
 
 -- ── Enums ───────────────────────────────────────────────────
+
 create type disability_type as enum (
   'mobility', 'vision', 'hearing', 'cognitive', 'sensory', 'other'
 );
@@ -63,6 +60,7 @@ create type civic_report_type as enum (
 );
 
 -- ── updated_at trigger function ──────────────────────────────
+
 create or replace function public.set_updated_at()
 returns trigger as $$
 begin
@@ -73,7 +71,6 @@ $$ language plpgsql;
 
 -- ── Tables ───────────────────────────────────────────────────
 
--- USERS (extends auth.users)
 create table public.users (
   id                 uuid references auth.users(id) on delete cascade primary key,
   display_name       text,
@@ -93,7 +90,6 @@ create trigger users_updated_at
   before update on public.users
   for each row execute function public.set_updated_at();
 
--- Auto-create a profile row when a new auth user signs up.
 create or replace function public.handle_new_user()
 returns trigger as $$
 begin
@@ -108,7 +104,6 @@ create trigger on_auth_user_created
   after insert on auth.users
   for each row execute function public.handle_new_user();
 
--- VENUES
 create table public.venues (
   id               uuid default uuid_generate_v4() primary key,
   name             text not null,
@@ -146,7 +141,6 @@ create trigger venues_updated_at
   before update on public.venues
   for each row execute function public.set_updated_at();
 
--- REVIEWS
 create table public.reviews (
   id               uuid default uuid_generate_v4() primary key,
   venue_id         uuid references public.venues(id) on delete cascade not null,
@@ -183,7 +177,6 @@ create trigger reviews_updated_at
   before update on public.reviews
   for each row execute function public.set_updated_at();
 
--- VENUE CHANGE REPORTS
 create table public.venue_change_reports (
   id          uuid default uuid_generate_v4() primary key,
   venue_id    uuid references public.venues(id) on delete cascade not null,
@@ -196,7 +189,6 @@ create table public.venue_change_reports (
 
 create index venue_change_reports_venue_id_idx on public.venue_change_reports(venue_id);
 
--- BUSINESSES
 create table public.businesses (
   id                     uuid default uuid_generate_v4() primary key,
   owner_id               uuid references public.users(id) not null,
@@ -214,7 +206,6 @@ create trigger businesses_updated_at
   before update on public.businesses
   for each row execute function public.set_updated_at();
 
--- CIVIC REPORTS
 create table public.civic_reports (
   id                 uuid default uuid_generate_v4() primary key,
   user_id            uuid references public.users(id) on delete cascade not null,
@@ -243,7 +234,6 @@ create trigger civic_reports_updated_at
   before update on public.civic_reports
   for each row execute function public.set_updated_at();
 
--- CITIES
 create table public.cities (
   id                  uuid default uuid_generate_v4() primary key,
   name                text not null,
@@ -264,7 +254,6 @@ create trigger cities_updated_at
   before update on public.cities
   for each row execute function public.set_updated_at();
 
--- OUTINGS
 create table public.outings (
   id          uuid default uuid_generate_v4() primary key,
   user_id     uuid references public.users(id) on delete cascade not null,
@@ -279,6 +268,7 @@ create table public.outings (
 create index outings_user_id_idx on public.outings(user_id);
 
 -- ── Row Level Security ───────────────────────────────────────
+
 alter table public.users                enable row level security;
 alter table public.venues               enable row level security;
 alter table public.reviews              enable row level security;
@@ -288,7 +278,6 @@ alter table public.civic_reports        enable row level security;
 alter table public.cities               enable row level security;
 alter table public.outings              enable row level security;
 
--- Users
 create policy "Users can read own profile"
   on public.users for select using (auth.uid() = id);
 create policy "Users can insert own profile"
@@ -296,7 +285,6 @@ create policy "Users can insert own profile"
 create policy "Users can update own profile"
   on public.users for update using (auth.uid() = id);
 
--- Venues
 create policy "Venues are publicly readable"
   on public.venues for select using (true);
 create policy "Authenticated users can suggest venues"
@@ -304,7 +292,6 @@ create policy "Authenticated users can suggest venues"
 create policy "Claimed owners can update their venues"
   on public.venues for update using (auth.uid() = claimed_by);
 
--- Reviews
 create policy "Reviews are publicly readable"
   on public.reviews for select using (true);
 create policy "Users can write own reviews"
@@ -314,17 +301,14 @@ create policy "Users can update own reviews"
 create policy "Users can delete own reviews"
   on public.reviews for delete using (auth.uid() = user_id);
 
--- Venue change reports
 create policy "Venue change reports are publicly readable"
   on public.venue_change_reports for select using (true);
 create policy "Authenticated users can submit change reports"
   on public.venue_change_reports for insert with check (auth.uid() = user_id);
 
--- Businesses
 create policy "Business owners can manage their business"
   on public.businesses for all using (auth.uid() = owner_id);
 
--- Civic reports
 create policy "Civic reports are publicly readable"
   on public.civic_reports for select using (true);
 create policy "Authenticated users can submit civic reports"
@@ -332,17 +316,16 @@ create policy "Authenticated users can submit civic reports"
 create policy "Users can update own civic reports"
   on public.civic_reports for update using (auth.uid() = user_id);
 
--- Cities
 create policy "Cities are publicly readable"
   on public.cities for select using (true);
 
--- Outings
 create policy "Users can read own or public outings"
   on public.outings for select using (auth.uid() = user_id or is_public = true);
 create policy "Users can manage own outings"
   on public.outings for all using (auth.uid() = user_id);
 
--- ── Helper RPCs (atomic counter increments) ──────────────────
+-- ── Helper RPCs ──────────────────────────────────────────────
+
 create or replace function public.increment_venue_review_count(venue_id uuid)
 returns void as $$
   update public.venues
