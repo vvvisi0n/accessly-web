@@ -22,7 +22,7 @@ export default function AIChatWidget() {
       handleUserMessage(text);
     },
     language,
-    wakeWord: "accessly",
+    wakeWord: "accessana",
   });
 
   // preload chime
@@ -84,7 +84,7 @@ export default function AIChatWidget() {
             : "bg-gradient-to-r from-blue-600 to-purple-600"
         }`}
       >
-        <h2 className="text-lg font-semibold">Accessly AI Assistant</h2>
+        <h2 className="text-lg font-semibold">Accessana AI Assistant</h2>
         <button
           onClick={active ? stopListening : startListening}
           className={`px-3 py-1 rounded-md text-sm font-medium transition ${
@@ -106,12 +106,12 @@ export default function AIChatWidget() {
                 : "bg-gray-100 text-gray-800"
             }`}
           >
-            <strong>{msg.role === "user" ? "You: " : "Accessly: "}</strong>
+            <strong>{msg.role === "user" ? "You: " : "Accessana: "}</strong>
             {msg.text}
           </div>
         ))}
         {loading && (
-          <div className="text-gray-400 text-sm animate-pulse">Accessly is thinking…</div>
+          <div className="text-gray-400 text-sm animate-pulse">Accessana is thinking…</div>
         )}
         <div ref={chatEndRef} />
       </div>
@@ -135,7 +135,7 @@ export default function AIChatWidget() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder={
-            listening ? "Listening... say 'Accessly' + your request" : "Type or say something..."
+            listening ? "Listening... say 'Accessana' + your request" : "Type or say something..."
           }
           className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none"
         />

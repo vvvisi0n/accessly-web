@@ -5,7 +5,7 @@ import { db } from "@/lib/firebase";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 
 /**
- * Accessly AI Revenue Insights (Secure)
+ * Accessana AI Revenue Insights (Secure)
  * -------------------------------------
  * This version calls the backend API route for AI processing.
  * No API keys are exposed to the frontend.

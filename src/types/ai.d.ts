@@ -1,5 +1,5 @@
 /**
- * Shared TypeScript Types for Accessly AI
+ * Shared TypeScript Types for Accessana AI
  * ---------------------------------------
  * Defines consistent types for API responses, frontend props, and AI structures.
  */

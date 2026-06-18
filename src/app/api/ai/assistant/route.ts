@@ -6,7 +6,7 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 const GOOGLE_KEY = process.env.GOOGLE_MAPS_API_KEY!;
 const SYSTEM_PROMPT = `
-You are Accessly AI — a multilingual accessibility companion.
+You are Accessana AI — a multilingual accessibility companion.
 Be concise, empathetic, and practical. Tailor tips to the user's need (wheelchair, low_vision, deaf_hoh).
 If coordinates are present and user asks "near me" (or similar), you may rely on provided place results (if any) and give short, actionable picks + tips.
 If no live data, provide what to ask the venue or how to verify accessibility.
@@ -161,7 +161,8 @@ When place results are provided, pick 3 helpful options with 1 actionable tip ea
     console.error("assistant route error:", err);
     if (err?.code === "insufficient_quota" || err?.status === 429) {
       return NextResponse.json({
-        reply: "Accessly AI is temporarily offline due to server limits. Please try again shortly.",
+        reply:
+          "Accessana AI is temporarily offline due to server limits. Please try again shortly.",
         places: [],
       });
     }

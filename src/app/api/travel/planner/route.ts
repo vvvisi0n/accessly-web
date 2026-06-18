@@ -12,6 +12,6 @@ export async function POST(req: Request) {
   return Response.json({
     destination,
     itinerary,
-    notes: "Generated using Accessly AI Core and Travel Data API",
+    notes: "Generated using Accessana AI Core and Travel Data API",
   });
 }

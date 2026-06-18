@@ -23,12 +23,12 @@ export default function useOfflineWakeWord({
     let cleanup = () => {};
     try {
       if (!accessKey || accessKey === "TEST_MODE_KEY") {
-        console.warn("🧠 Running MOCK WAKE MODE — 'Hey Accessly' simulated locally.");
+        console.warn("🧠 Running MOCK WAKE MODE — 'Hey Accessana' simulated locally.");
         setActive(true);
 
         const interval = setInterval(() => {
           if (Math.random() > 0.75) {
-            console.log("🎯 Simulated wake trigger — Hey Accessly");
+            console.log("🎯 Simulated wake trigger — Hey Accessana");
             onWake();
           }
         }, 30000);

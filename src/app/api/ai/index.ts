@@ -1,5 +1,5 @@
 /**
- * Accessly AI - Barrel Export File
+ * Accessana AI - Barrel Export File
  * --------------------------------
  * This file centralizes all AI-related exports:
  * - API route handlers (chat, places)

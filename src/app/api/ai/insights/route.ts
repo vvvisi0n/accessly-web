@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
 /**
- * Accessly AI Revenue Insights API Route
+ * Accessana AI Revenue Insights API Route
  * --------------------------------------
  * This backend route securely communicates with OpenAI using your server-side key.
  * It summarizes Stripe logs into clear, human-readable business insights.
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
     // Compose AI prompt for revenue summary
     const prompt = `
-You are an expert financial analytics assistant for Accessly Pro.
+You are an expert financial analytics assistant for Accessana Pro.
 Your goal is to analyze Stripe event logs and summarize trends.
 
 Guidelines:

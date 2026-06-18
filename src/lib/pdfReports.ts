@@ -25,7 +25,7 @@ export async function generatePDFReport({
   };
 
   // Header
-  drawText("Accessly Report", 22);
+  drawText("Accessana Report", 22);
   drawText(title, 16);
   y -= 10;
   drawText(summary, 11);

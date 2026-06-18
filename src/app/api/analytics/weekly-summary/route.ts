@@ -34,9 +34,9 @@ export async function POST() {
     });
 
     await transporter.sendMail({
-      from: `"Accessly Pro" <${process.env.SMTP_FROM!}>`,
+      from: `"Accessana Pro" <${process.env.SMTP_FROM!}>`,
       to: process.env.SMTP_TO!,
-      subject: "Accessly Pro – Weekly Executive Summary",
+      subject: "Accessana Pro – Weekly Executive Summary",
       text: summary,
       html: `<pre style="font:14px/1.45 ui-monospace, SFMono-Regular, Menlo">${summary}</pre>`,
     });

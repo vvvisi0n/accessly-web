@@ -173,7 +173,7 @@ export default function VoiceNav({ places }: { places: NavPlace[] }) {
 
   // 🌐 Offline Recovery
   const { isOnline } = useOfflineRecovery({
-    key: "accessly-route-cache",
+    key: "accessana-route-cache",
     data: { places, nearbyPlaces },
     onRestore: () =>
       speak({ text: "Connection restored — resuming navigation.", context: "normal" }),

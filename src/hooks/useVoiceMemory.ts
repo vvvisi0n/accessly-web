@@ -20,7 +20,7 @@ export default function useVoiceMemory(userId?: string) {
 
   // 🔁 Local load
   useEffect(() => {
-    const saved = localStorage.getItem("accessly_voice_profile");
+    const saved = localStorage.getItem("accessana_voice_profile");
     if (saved) {
       try {
         setProfile(JSON.parse(saved));
@@ -48,7 +48,7 @@ export default function useVoiceMemory(userId?: string) {
           pitch: data.pitch,
         });
         localStorage.setItem(
-          "accessly_voice_profile",
+          "accessana_voice_profile",
           JSON.stringify({
             voiceName: data.voice_name,
             tone: data.tone,
@@ -64,7 +64,7 @@ export default function useVoiceMemory(userId?: string) {
   const updateVoiceProfile = async (updates: Partial<VoiceProfile>) => {
     const newProfile = { ...profile, ...updates } as VoiceProfile;
     setProfile(newProfile);
-    localStorage.setItem("accessly_voice_profile", JSON.stringify(newProfile));
+    localStorage.setItem("accessana_voice_profile", JSON.stringify(newProfile));
 
     if (userId) {
       await supabase.from("voice_profiles").upsert({

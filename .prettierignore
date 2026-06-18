@@ -1,0 +1,9 @@
+# Generated / build output
+.next/
+node_modules/
+out/
+
+# Legacy files with syntax that predates Phase 1 — cannot be parsed
+src/app/api/ai/voice/route.ts
+src/app/api/travel/planner/route.ts
+src/app/api/travel/report/route.ts

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export type AccessibilityMode = "wheelchair" | "low_vision" | "deaf_hoh" | "none";
 
-const KEY = "accessly_user_prefs_v1";
+const KEY = "accessana_user_prefs_v1";
 
 export function useUserPrefs() {
   const [mode, setMode] = useState<AccessibilityMode>("none");

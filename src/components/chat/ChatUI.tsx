@@ -38,7 +38,7 @@ export default function ChatUI() {
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask Accessly AI..."
+          placeholder="Ask Accessana AI..."
           className="flex-1 p-2 border rounded-lg"
         />
         <button

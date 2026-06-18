@@ -5,7 +5,7 @@ import { FaTwitter, FaFacebook, FaLinkedin } from "react-icons/fa";
 
 export default function ShareButtons({ url }: { url: string }) {
   const encodedUrl = encodeURIComponent(url);
-  const text = encodeURIComponent("Check out this accessibility review on Accessly!");
+  const text = encodeURIComponent("Check out this accessibility review on Accessana!");
 
   return (
     <div className="flex items-center gap-4 text-sm text-blue-600">

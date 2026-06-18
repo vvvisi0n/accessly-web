@@ -43,7 +43,7 @@ export default function AIReviewAnalysis({
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    doc.text(`Accessly AI Accessibility Report`, 14, 16);
+    doc.text(`Accessana AI Accessibility Report`, 14, 16);
     doc.text(`Location: ${placeName || "Unknown"}`, 14, 24);
     doc.text(`Accessibility Score: ${score}/100`, 14, 32);
 
@@ -71,7 +71,7 @@ export default function AIReviewAnalysis({
       });
     }
 
-    doc.save(`Accessly_AI_Report_${Date.now()}.pdf`);
+    doc.save(`Accessana_AI_Report_${Date.now()}.pdf`);
   };
 
   return (

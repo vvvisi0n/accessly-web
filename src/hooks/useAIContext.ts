@@ -7,7 +7,7 @@ import { useState, useEffect } from "react";
 export function useAIContext() {
   const [context, setContext] = useState<any>(() => {
     if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("accessly-ai-context");
+      const saved = localStorage.getItem("accessana-ai-context");
       return saved ? JSON.parse(saved) : { preferences: {} };
     }
     return { preferences: {} };
@@ -17,7 +17,7 @@ export function useAIContext() {
     setContext((prev: any) => {
       const updated = { ...prev, [key]: value };
       if (typeof window !== "undefined") {
-        localStorage.setItem("accessly-ai-context", JSON.stringify(updated));
+        localStorage.setItem("accessana-ai-context", JSON.stringify(updated));
       }
       return updated;
     });

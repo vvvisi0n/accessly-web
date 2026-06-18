@@ -25,13 +25,13 @@ export default function useUserMemory() {
 
   // Load saved prefs
   useEffect(() => {
-    const saved = localStorage.getItem("accessly-user-prefs");
+    const saved = localStorage.getItem("accessana-user-prefs");
     if (saved) setPrefs(JSON.parse(saved));
   }, []);
 
   // Save prefs on change
   useEffect(() => {
-    localStorage.setItem("accessly-user-prefs", JSON.stringify(prefs));
+    localStorage.setItem("accessana-user-prefs", JSON.stringify(prefs));
   }, [prefs]);
 
   function updatePref<K extends keyof UserPrefs>(key: K, value: UserPrefs[K]) {

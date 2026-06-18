@@ -33,7 +33,7 @@ export async function POST(req: Request) {
       messages: [
         {
           role: "system",
-          content: `You are Accessly AI, an accessibility assistant.
+          content: `You are Accessana AI, an accessibility assistant.
             Respond conversationally, helping users with navigation, accessibility,
             and nearby recommendations.`,
         },

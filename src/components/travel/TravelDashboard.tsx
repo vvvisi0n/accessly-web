@@ -23,7 +23,7 @@ export default function TravelDashboard() {
 
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold text-blue-600">Accessly Travel Dashboard</h1>
+      <h1 className="text-2xl font-bold text-blue-600">Accessana Travel Dashboard</h1>
       <div className="p-4 border rounded-lg bg-white dark:bg-neutral-900 shadow">
         <h2 className="text-lg font-semibold mb-2">AI Travel Planner</h2>
         <input

@@ -1,1 +1,3 @@
-export default function ProDashboard() { return <div>Accessly Pro Dashboard</div>; } echo export default function SpaceDesigner() { return <div>AI Space Designer Placeholder</div>; } echo export default function SignageStudio() { return <div>AI Signage Studio Placeholder</div>; } echo export default function AccessibilityAssistant() { return <div>AI Accessibility Assistant Placeholder</div>; } echo export default function AnalyticsOverview() { return <div>Analytics Overview Placeholder</div>; } echo export default function ReportHistory() { return <div>Report History Placeholder</div>; }
+export default function ReportHistory() {
+  return null;
+}

@@ -53,7 +53,7 @@ Message: "${message}"
       messages: [
         {
           role: "system",
-          content: `You are Accessly AI, an accessibility companion. 
+          content: `You are Accessana AI, an accessibility companion. 
           Be kind, concise, and factual.`,
         },
         { role: "user", content: message },

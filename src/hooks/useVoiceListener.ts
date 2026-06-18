@@ -11,7 +11,7 @@ export interface VoiceListenerOptions {
 
 export default function useVoiceListener({
   onCommand,
-  wakeWord = "accessly",
+  wakeWord = "accessana",
   language = "en-US",
 }: VoiceListenerOptions) {
   const [active, setActive] = useState(false);

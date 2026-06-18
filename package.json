@@ -1,5 +1,5 @@
 {
-  "name": "accessly",
+  "name": "accessana",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -15,6 +15,7 @@
   "dependencies": {
     "@picovoice/porcupine-web": "^3.0.3",
     "@picovoice/web-voice-processor": "^4.0.9",
+    "@supabase/ssr": "^0.12.0",
     "@supabase/supabase-js": "^2.81.1",
     "@types/mapbox-gl": "^3.4.1",
     "@types/three": "^0.181.0",
@@ -23,6 +24,7 @@
     "next": "14.1.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "stripe": "^22.2.1",
     "three": "^0.181.1"
   },
   "devDependencies": {

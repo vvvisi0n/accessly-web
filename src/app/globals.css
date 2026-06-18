@@ -1,62 +1,143 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* ── Fonts ────────────────────────────────────────────────────────────────── */
+/* Loaded via next/font in layout.tsx — CSS variables are injected there.     */
 
-/* ============================================
-   Accessly Global Animations & Effects
-   ============================================ */
+/* ── Reset ───────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-/* === 🌈 Accessly Voice Glow Animation === */
-@keyframes pulse-glow {
-  0% {
-    box-shadow: 0 0 0px rgba(79, 70, 229, 0);
-  }
-  50% {
-    box-shadow: 0 0 25px rgba(79, 70, 229, 0.6);
-  }
-  100% {
-    box-shadow: 0 0 0px rgba(79, 70, 229, 0);
+/* ── Design tokens — light mode ─────────────────────────────────────────── */
+:root {
+  /* Consumer (Track A) */
+  --blue: #1b6ef3;
+  --blue-dark: #1558d0;
+  --blue-soft: #ebf2ff;
+
+  /* Pro/SaaS (Track B) — never used in consumer screens */
+  --violet: #7c3aed;
+  --violet-soft: #f3eeff;
+  --violet-dim: #c4b5fd;
+
+  /* Civic (Track C) — never used outside civic screens */
+  --civic: #dc2626;
+
+  /* Text */
+  --ink: #0d0d0e;
+  --ink-2: #3d3d40;
+  --ink-3: #8a8a90;
+
+  /* Surfaces */
+  --bg: #ffffff;
+  --surface: #f5f5f7;
+  --border: #e8e8ec;
+  --border-med: rgba(0, 0, 0, 0.12);
+
+  /* Access Index score colors — reserved exclusively for scores */
+  --score-green: #00c27a;
+  --score-amber: #f5a524;
+  --score-red: #ff5c5c;
+  --score-grey: #9ca3af;
+
+  /* Radius */
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 20px;
+  --radius-pill: 100px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Design tokens — dark mode ──────────────────────────────────────────── */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --blue: #4c8dff;
+    --blue-soft: #15233f;
+
+    --ink: #f2f2f4;
+    --ink-2: #c2c2c6;
+    --ink-3: #76767c;
+
+    --bg: #0b0b0d;
+    --surface: #17171a;
+    --border: #26262a;
   }
 }
 
-.animate-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+/* ── Base ────────────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
-/* === 🎤 Voice Listening Ring Animation === */
-@keyframes listening-ring {
-  0% {
-    box-shadow:
-      0 0 0 0 rgba(59, 130, 246, 0.6),
-      0 0 0 8px rgba(147, 51, 234, 0.2);
-  }
-  50% {
-    box-shadow:
-      0 0 0 6px rgba(59, 130, 246, 0.3),
-      0 0 0 14px rgba(147, 51, 234, 0.15);
-  }
-  100% {
-    box-shadow:
-      0 0 0 0 rgba(59, 130, 246, 0),
-      0 0 0 8px rgba(147, 51, 234, 0);
-  }
+body {
+  font-family: var(--font-body, "Plus Jakarta Sans", sans-serif);
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--ink);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-.animate-listening-ring {
-  animation: listening-ring 1.8s ease-in-out infinite;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-/* === 💫 Accessibility UI Touches === */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+button {
+  font-family: inherit;
+  cursor: pointer;
 }
 
-::-webkit-scrollbar-thumb {
-  background-color: rgba(100, 116, 139, 0.4);
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* ── Focus visible ────────────────────────────────────────────────────────
+   Accessibility requirement: all interactive elements must have visible
+   focus states. Remove default outline only when :focus-visible is used.  */
+:focus-visible {
+  outline: 2.5px solid var(--blue);
+  outline-offset: 3px;
   border-radius: 4px;
 }
 
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* ── Reduced motion ──────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(79, 70, 229, 0.6);
+  background: var(--ink-3);
 }

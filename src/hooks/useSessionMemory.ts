@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 export type ChatMessage = { role: "user" | "assistant" | "system"; content: string };
 
-const KEY = "accessly_chat_history_v2";
+const KEY = "accessana_chat_history_v2";
 
 export function useSessionMemory(maxMessages = 20) {
   const [history, setHistory] = useState<ChatMessage[]>([]);

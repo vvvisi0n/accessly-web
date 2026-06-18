@@ -6,7 +6,7 @@ export async function generateComplianceReport(input: {
 }) {
   // Stub: In Phase 4 we’ll render a real PDF. For now, return a simple object.
   return {
-    filename: `Accessly_Report_${input.site}_${Date.now()}.pdf`,
+    filename: `Accessana_Report_${input.site}_${Date.now()}.pdf`,
     summary: `Compliance report for ${input.site} generated.`,
   };
 }

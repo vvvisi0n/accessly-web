@@ -43,20 +43,20 @@ export default function AIChatWidget({ userId = "guest" }: { userId?: string }) 
   useEffect(() => {
     if (open && inputRef.current) inputRef.current.focus();
   }, [open]);
-// 🎧 Keyboard shortcut for mock wake trigger (Shift + Space)
-useEffect(() => {
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (e.shiftKey && e.code === "Space") {
-      e.preventDefault();
-      console.log("⌨️ Shift+Space → Simulated 'Hey Accessly'");
-      setOpen(true);
-      toggle(); // start listening
-    }
-  };
+  // 🎧 Keyboard shortcut for mock wake trigger (Shift + Space)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.shiftKey && e.code === "Space") {
+        e.preventDefault();
+        console.log("⌨️ Shift+Space → Simulated 'Hey Accessana'");
+        setOpen(true);
+        toggle(); // start listening
+      }
+    };
 
-  window.addEventListener("keydown", handleKeyDown);
-  return () => window.removeEventListener("keydown", handleKeyDown);
-}, [toggle]);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [toggle]);
 
   // 🧠 Send message handler
   const sendMessage = async (inputMessage?: string) => {
@@ -84,9 +84,7 @@ useEffect(() => {
           </button>
 
           <div className="text-[10px] text-gray-500 mt-1">
-            {offlineWakeActive
-              ? "🟢 Wake mode active (mock)"
-              : "⚪ Wake mode idle"}
+            {offlineWakeActive ? "🟢 Wake mode active (mock)" : "⚪ Wake mode idle"}
             {wakeErr && <div className="text-red-500">{wakeErr}</div>}
           </div>
         </div>
@@ -95,12 +93,9 @@ useEffect(() => {
           {/* Header */}
           <div className="flex items-center justify-between p-3 border-b border-gray-200 dark:border-neutral-700">
             <h4 className="font-semibold text-gray-800 dark:text-gray-200 flex items-center gap-2">
-              <MessageCircle size={18} /> Accessly AI
+              <MessageCircle size={18} /> Accessana AI
             </h4>
-            <button
-              onClick={() => setOpen(false)}
-              className="text-gray-500 hover:text-gray-700"
-            >
+            <button onClick={() => setOpen(false)} className="text-gray-500 hover:text-gray-700">
               <X size={18} />
             </button>
           </div>
@@ -120,9 +115,7 @@ useEffect(() => {
               </div>
             ))}
             {thinking && (
-              <div className="text-xs text-blue-500 animate-pulse">
-                Accessly is thinking…
-              </div>
+              <div className="text-xs text-blue-500 animate-pulse">Accessana is thinking…</div>
             )}
           </div>
 

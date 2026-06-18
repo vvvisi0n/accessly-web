@@ -1,40 +1,64 @@
 import "./globals.css";
-import { Inter } from "next/font/google";
-import { Metadata, Viewport } from "next";
-import SessionProviderWrapper from "@/components/SessionProviderWrapper";
-import { ReactNode } from "react";
-import AIChatWidget from "@/components/chat/AIChatWidget";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import type { ReactNode } from "react";
 
-const inter = Inter({ subsets: ["latin"] });
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["300", "600"],
+  style: ["normal", "italic"],
+  axes: ["opsz"],
+});
 
-// ✅ Viewport settings (handles theme color)
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
 export const viewport: Viewport = {
-  themeColor: "#4361EE",
+  themeColor: "#1B6EF3",
 };
 
-// ✅ App metadata
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "Accessly",
-  description: "Find and share accessible places in your city.",
-  manifest: "/manifest.json",
-  icons: {
-    icon: "/assets/logo/favicon.ico",
-    apple: "/assets/logo/logo-light.png",
+  title: {
+    default: "Accessana",
+    template: "%s · Accessana",
+  },
+  description:
+    "Find, review, and rate venues by accessibility. The Access Index tells you how accessible a place really is.",
+  metadataBase: new URL(APP_URL),
+  openGraph: {
+    siteName: "Accessana",
+    type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "/og-default.png",
+        width: 1200,
+        height: 630,
+        alt: "Accessana — accessibility reviews",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@accessana",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
 };
 
-// ✅ Root layout
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        {/* Global Session Provider */}
-        <SessionProviderWrapper>
-          {children}
-          {/* 🌟 Accessly AI Chat Widget — visible on every page */}
-          <AIChatWidget />
-        </SessionProviderWrapper>
-      </body>
+    <html lang="en" className={`${fraunces.variable} ${plusJakarta.variable}`}>
+      <body>{children}</body>
     </html>
   );
 }

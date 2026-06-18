@@ -33,13 +33,13 @@ export default function ReviewDetail({ id }: { id: string }) {
 <div className="mt-6">
   <p className="text-sm text-gray-600 mb-2">Share this review:</p>
   <div className="flex gap-4 items-center">
-    <FacebookShareButton url={`https://accessly.io${pathname}`}>
+    <FacebookShareButton url={`https://accessana.io${pathname}`}>
       <FacebookIcon size={32} round />
     </FacebookShareButton>
-    <TwitterShareButton url={`https://accessly.io${pathname}`}>
+    <TwitterShareButton url={`https://accessana.io${pathname}`}>
       <TwitterIcon size={32} round />
     </TwitterShareButton>
-    <WhatsappShareButton url={`https://accessly.io${pathname}`}>
+    <WhatsappShareButton url={`https://accessana.io${pathname}`}>
       <WhatsappIcon size={32} round />
     </WhatsappShareButton>
   </div>

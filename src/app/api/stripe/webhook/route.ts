@@ -1,71 +1,108 @@
-import { NextResponse } from "next/server";
-import Stripe from "stripe";
-import { db } from "@/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { NextRequest, NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe/config";
+import { createServiceClient } from "@/lib/supabase/server";
+import type Stripe from "stripe";
 
-/**
- * Accessly Stripe Webhook
- * -----------------------
- * Receives all Stripe events and logs them to Firestore.
- */
+// In Next.js App Router the body is NOT auto-parsed, so req.text() gives us
+// the raw bytes that Stripe needs for signature verification.
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2025-10-29.clover", // match Stripe CLI version
-});
+export async function POST(req: NextRequest) {
+  const sig = req.headers.get("stripe-signature");
+  if (!sig) {
+    return NextResponse.json({ error: "Missing stripe-signature header" }, { status: 400 });
+  }
 
-export async function POST(req: Request) {
+  const rawBody = await req.text();
+  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    return NextResponse.json({ error: "Webhook secret not configured" }, { status: 500 });
+  }
+
+  let event: Stripe.Event;
   try {
-    const sig = req.headers.get("stripe-signature");
-    if (!sig) {
-      return NextResponse.json({ error: "Missing Stripe signature" }, { status: 400 });
-    }
+    event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Signature verification failed";
+    return NextResponse.json({ error: msg }, { status: 400 });
+  }
 
-    const body = await req.text();
-    const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
-    let event: Stripe.Event;
+  const supabase = createServiceClient();
 
-    if (event.type === "checkout.session.completed") {
-      const session = event.data.object;
-      const userEmail = session.customer_email;
-
-      if (userEmail) {
-        const usersRef = db.collection("users");
-        const snapshot = await usersRef.where("email", "==", userEmail).get();
-        snapshot.forEach(async (doc) => {
-          await doc.ref.update({ role: "pro" });
-        });
+  try {
+    switch (event.type) {
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
+        await handleCheckoutCompleted(supabase, session);
+        break;
       }
+      case "customer.subscription.updated":
+      case "customer.subscription.deleted": {
+        const sub = event.data.object as Stripe.Subscription;
+        await handleSubscriptionChange(supabase, sub);
+        break;
+      }
+      default:
+        // Unhandled event types are acknowledged and ignored.
+        break;
     }
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "Handler error";
+    console.error(`Stripe webhook handler failed [${event.type}]:`, msg);
+    return NextResponse.json({ error: msg }, { status: 500 });
+  }
 
-    try {
-      event = stripe.webhooks.constructEvent(body, sig, webhookSecret);
-    } catch (err: any) {
-      console.error("❌ Webhook signature verification failed:", err.message);
-      return NextResponse.json({ error: err.message }, { status: 400 });
-    }
+  return NextResponse.json({ received: true });
+}
 
-    // Log all events to Firestore
-    const eventData = {
-      id: event.id,
-      type: event.type,
-      data: event.data.object,
-      createdAt: serverTimestamp(),
-    };
+// ── Helpers ───────────────────────────────────────────────────────────────
 
-    await addDoc(collection(db, "stripe_logs"), eventData);
+type SupabaseServiceClient = Awaited<ReturnType<typeof createServiceClient>>;
 
-    console.log(`📦 Logged Stripe event: ${event.type}`);
+async function handleCheckoutCompleted(
+  supabase: SupabaseServiceClient,
+  session: Stripe.Checkout.Session
+) {
+  const customerId = session.customer as string | null;
+  const userId = session.metadata?.user_id;
+  const plan = planFromPriceId(session);
 
-    return NextResponse.json({ received: true });
-  } catch (error: any) {
-    console.error("❌ Stripe webhook error:", error.message);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+  if (!plan) return;
+
+  if (userId) {
+    await supabase.from("users").update({ plan, stripe_customer_id: customerId }).eq("id", userId);
+  } else if (customerId) {
+    // Fall back to matching by Stripe customer ID.
+    await supabase.from("users").update({ plan }).eq("stripe_customer_id", customerId);
   }
 }
 
-// Ensure Next.js doesn’t parse the body automatically
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+async function handleSubscriptionChange(
+  supabase: SupabaseServiceClient,
+  subscription: Stripe.Subscription
+) {
+  const customerId = subscription.customer as string;
+  const isActive = subscription.status === "active" || subscription.status === "trialing";
+  const plan = isActive ? planFromSubscription(subscription) : "free";
+
+  if (!plan) return;
+
+  await supabase.from("users").update({ plan }).eq("stripe_customer_id", customerId);
+}
+
+function planFromPriceId(session: Stripe.Checkout.Session): "pro" | "enterprise" | null {
+  const priceId =
+    (session.line_items?.data[0]?.price?.id as string | undefined) ?? session.metadata?.price_id;
+
+  if (!priceId) return null;
+  if (priceId === process.env.STRIPE_PRICE_PRO_MONTHLY) return "pro";
+  if (priceId === process.env.STRIPE_PRICE_ENTERPRISE_MONTHLY) return "enterprise";
+  return null;
+}
+
+function planFromSubscription(subscription: Stripe.Subscription): "pro" | "enterprise" | null {
+  const priceId = subscription.items.data[0]?.price?.id;
+  if (!priceId) return null;
+  if (priceId === process.env.STRIPE_PRICE_PRO_MONTHLY) return "pro";
+  if (priceId === process.env.STRIPE_PRICE_ENTERPRISE_MONTHLY) return "enterprise";
+  return null;
+}
