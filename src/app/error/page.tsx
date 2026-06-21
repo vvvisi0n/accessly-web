@@ -1,21 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
-
-export default function GlobalError({ error, reset }: { error: Error; reset: () => void }) {
-  useEffect(() => {
-    console.error("Global app error:", error);
-  }, [error]);
-
+export default function ErrorPage() {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center text-center p-6">
-      <h1 className="text-3xl font-bold text-red-600 mb-4">Something went wrong</h1>
-      <p className="text-gray-600 mb-6">{error.message}</p>
+    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", padding: "1.5rem" }}>
+      <h1 style={{ fontSize: "1.875rem", fontWeight: 700, color: "#dc2626", marginBottom: "1rem" }}>
+        Something went wrong
+      </h1>
+      <p style={{ color: "#6b7280", marginBottom: "1.5rem" }}>
+        An unexpected error occurred. Please try refreshing the page.
+      </p>
       <button
-        onClick={reset}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        onClick={() => window.location.href = "/"}
+        style={{ background: "#1B6EF3", color: "white", padding: "0.5rem 1rem", borderRadius: "0.375rem", border: "none", cursor: "pointer" }}
       >
-        Try again
+        Back to home
       </button>
     </div>
   );

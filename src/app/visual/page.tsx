@@ -1,4 +1,6 @@
 "use client";
+
+export const dynamic = "force-dynamic";
 import AIVisualRender from "@/components/AIVisualRender";
 import AIChatWidget from "@/components/chat/AIChatWidget";
 

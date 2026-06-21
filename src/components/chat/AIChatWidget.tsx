@@ -33,7 +33,7 @@ export default function AIChatWidget({ userId = "guest" }: { userId?: string }) 
   const { active: offlineWakeActive, error: wakeErr } = useOfflineWakeWord({
     accessKey: process.env.NEXT_PUBLIC_PICOVOICE_ACCESS_KEY!,
     onWake: () => {
-      console.log("👂 Offline wake word detected — opening chat & activating mic");
+      console.log("👂 Offline wake word detected - opening chat & activating mic");
       setOpen(true);
       toggle();
     },

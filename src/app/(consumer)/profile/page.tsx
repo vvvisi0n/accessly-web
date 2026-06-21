@@ -203,12 +203,13 @@ export default function ProfilePage() {
       return;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { error: err } = await supabase.from("users").upsert({
       id: user.id,
       display_name: displayName.trim() || null,
       disability_types: selected,
       preferred_language: language,
-    });
+    } as any);
 
     if (err) {
       setError(err.message);

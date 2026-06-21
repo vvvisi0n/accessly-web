@@ -35,7 +35,7 @@ function weightedAvg(pairs: Array<{ score: number | null; weight: number }>): nu
   return valid.reduce((s, p) => s + p.score * p.weight, 0) / totalWeight;
 }
 
-// Map a 1–5 weighted average onto the 0–20 checkpoint scale.
+// Map a 1-5 weighted average onto the 0-20 checkpoint scale.
 function toCheckpointScore(avg: number): number {
   return Math.max(0, Math.min(20, (avg - 1) * 5));
 }

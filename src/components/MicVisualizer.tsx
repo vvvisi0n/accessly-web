@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
  * Animated pulsing waves that visualize when the microphone is active.
  *
  * Props:
- * - isListening: boolean — whether the mic is active
+ * - isListening: boolean - whether the mic is active
  */
 
 interface MicVisualizerProps {

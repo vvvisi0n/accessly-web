@@ -2,11 +2,10 @@ import { NextResponse } from "next/server";
 import OpenAI from "openai";
 import { logAIInteraction } from "@/lib/insights";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
 
 const GOOGLE_KEY = process.env.GOOGLE_MAPS_API_KEY!;
 const SYSTEM_PROMPT = `
-You are Accessana AI — a multilingual accessibility companion.
+You are Accessana AI, a multilingual accessibility companion.
 Be concise, empathetic, and practical. Tailor tips to the user's need (wheelchair, low_vision, deaf_hoh).
 If coordinates are present and user asks "near me" (or similar), you may rely on provided place results (if any) and give short, actionable picks + tips.
 If no live data, provide what to ask the venue or how to verify accessibility.
@@ -97,6 +96,7 @@ async function fetchPlaces(
 }
 
 export async function POST(req: Request) {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
   try {
     const { message, userLanguage = "auto", location, prefs, history = [] } = await req.json();
 
@@ -121,7 +121,7 @@ export async function POST(req: Request) {
 
     // Summarize place options for the model to reference in its answer
     const placeBrief = places.length
-      ? `Nearby results:\n${places.map((p) => `- ${p.name} (${p.rating ?? "N/A"}⭐) – ${p.address}`).join("\n")}`
+      ? `Nearby results:\n${places.map((p) => `- ${p.name} (${p.rating ?? "N/A"} stars), ${p.address}`).join("\n")}`
       : "No live nearby results fetched.";
 
     const system = `

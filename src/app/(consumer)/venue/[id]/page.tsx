@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import ScoreRing, { scoreColor, scoreLabel } from "@/components/ui/ScoreRing";
+import VenueCacheWriter from "@/components/venue/VenueCacheWriter";
 import type { CheckpointKey } from "@/types";
 
 // ── Checkpoint icons (exact SVG paths from accessana-venue-page.html) ─────
@@ -145,7 +146,7 @@ export async function generateMetadata({
         : "Be the first to review this venue",
     ]
       .filter(Boolean)
-      .join(" — ") + ".";
+      .join(". ");
 
   const image = venue.photos?.[0] ?? undefined;
 
@@ -178,6 +179,24 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
         paddingBottom: "5rem",
       }}
     >
+      {/* Cache venue data to IDB for offline fallback */}
+      <VenueCacheWriter
+        id={venue.id}
+        name={venue.name}
+        category={venue.category}
+        address={venue.address}
+        city={venue.city}
+        access_index={venue.access_index as number | null}
+        score_entrance={venue.score_entrance as number | null}
+        score_bathrooms={venue.score_bathrooms as number | null}
+        score_parking={venue.score_parking as number | null}
+        score_staff={venue.score_staff as number | null}
+        score_sensory={venue.score_sensory as number | null}
+        review_count={venue.review_count}
+        certified={venue.certified}
+        photos={venue.photos ?? []}
+      />
+
       {/* ── Back nav ── */}
       <div style={{ padding: "1rem 1.25rem 0", display: "flex", alignItems: "center", gap: 12 }}>
         <Link
@@ -469,7 +488,7 @@ export default async function VenuePage({ params }: { params: Promise<{ id: stri
                     {cp}
                   </span>
                   <span style={{ fontSize: "0.78rem", fontWeight: 800, color: "var(--ink)" }}>
-                    {pct ?? "—"}
+                    {pct ?? "-"}
                   </span>
                 </div>
                 <div

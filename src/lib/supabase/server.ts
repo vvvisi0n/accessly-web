@@ -4,7 +4,7 @@ import type { Database } from "./types";
 
 /**
  * Server Component / Route Handler client.
- * Uses the anon key — respects Row Level Security.
+ * Uses the anon key - respects Row Level Security.
  */
 export async function createClient() {
   const cookieStore = await cookies();
@@ -23,7 +23,7 @@ export async function createClient() {
               cookieStore.set(name, value, options)
             );
           } catch {
-            // setAll called from a Server Component — cookie writes are
+            // setAll called from a Server Component - cookie writes are
             // handled by the middleware refresh instead.
           }
         },
@@ -34,7 +34,7 @@ export async function createClient() {
 
 /**
  * API Route-only client using the service role key.
- * Bypasses RLS — never expose to the browser.
+ * Bypasses RLS - never expose to the browser.
  */
 export function createServiceClient() {
   return createServerClient<Database>(

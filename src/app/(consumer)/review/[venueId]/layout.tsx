@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-// Review flow is auth-gated — exclude from indexing.
+// Review flow is auth-gated - exclude from indexing.
 export const metadata: Metadata = {
   title: "Write an accessibility review",
   description:

@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
-});
 
 export async function POST(req: Request) {
+  const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY!,
+});
   try {
     const { imageUrl } = await req.json();
 
@@ -44,7 +44,7 @@ export async function POST(req: Request) {
     const features = analysis.accessibility_features?.length || 0;
     const issues = analysis.issues_detected?.length || 0;
     let score = base + features * 10 - issues * 10;
-    score = Math.min(100, Math.max(0, score)); // clamp 0–100
+    score = Math.min(100, Math.max(0, score)); // clamp 0-100
 
     // Attach score
     const enriched = { ...analysis, score };

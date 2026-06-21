@@ -2,6 +2,10 @@ import "./globals.css";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
+import Navbar from "@/components/shared/Navbar";
+import OfflineBanner from "@/components/offline/OfflineBanner";
+import ServiceWorkerRegistrar from "@/components/offline/ServiceWorkerRegistrar";
+import AnaRoot from "@/components/ana/AnaRoot";
 
 const fraunces = Fraunces({
   subsets: ["latin"],
@@ -39,7 +43,7 @@ export const metadata: Metadata = {
         url: "/og-default.png",
         width: 1200,
         height: 630,
-        alt: "Accessana — accessibility reviews",
+        alt: "Accessana accessibility reviews",
       },
     ],
   },
@@ -57,7 +61,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${plusJakarta.variable}`}>
-      <body>{children}</body>
+      <body>
+        <ServiceWorkerRegistrar />
+        <Navbar />
+        {children}
+        <OfflineBanner />
+        <AnaRoot />
+      </body>
     </html>
   );
 }

@@ -36,8 +36,8 @@ export default function usePathPrediction({
     if (!onHint) return;
     const interval = setInterval(() => {
       const hour = new Date().getHours();
-      if (hour > 18) onHint("It’s getting dark — would you like dark mode?");
-      if (hour < 9) onHint("Morning ahead — shall I give you a quick overview of today’s route?");
+      if (hour > 18) onHint("It’s getting dark. Would you like dark mode?");
+      if (hour < 9) onHint("Morning. Shall I give you a quick overview of today’s route?");
     }, 20000);
     return () => clearInterval(interval);
   }, [onHint]);

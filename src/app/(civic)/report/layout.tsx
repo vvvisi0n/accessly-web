@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-// Form page — exclude from indexing to avoid duplicate soft-404 signals.
+// Form page - exclude from indexing to avoid duplicate soft-404 signals.
 export const metadata: Metadata = {
   title: "Report an accessibility issue",
   description:

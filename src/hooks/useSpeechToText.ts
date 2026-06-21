@@ -27,7 +27,7 @@ export default function useSpeechToText({
 
   // Initialize SpeechRecognition
   useEffect(() => {
-    // @ts-expect-error – webkit prefix still required in many browsers
+    // @ts-expect-error - webkit prefix still required in many browsers
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {

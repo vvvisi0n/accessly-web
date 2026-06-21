@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 
-// Profile is auth-gated — exclude from indexing.
+// Profile is auth-gated - exclude from indexing.
 export const metadata: Metadata = {
   title: "My accessibility profile",
   description:

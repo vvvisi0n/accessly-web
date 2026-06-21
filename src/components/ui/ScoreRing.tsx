@@ -50,7 +50,7 @@ export default function ScoreRing({ score, size = "md", hideSub = false }: Score
       role="img"
       aria-label={score === null ? "No score yet" : `Access Index score: ${score} out of 100`}
     >
-      {/* Ring SVG — rotated -90° so the arc starts at the top */}
+      {/* Ring SVG - rotated -90° so the arc starts at the top */}
       <svg
         viewBox={`0 0 ${s.viewBox} ${s.viewBox}`}
         width={s.px}

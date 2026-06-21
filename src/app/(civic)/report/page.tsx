@@ -72,7 +72,7 @@ export default function CivicReportPage() {
     setSubmitting(true);
     setError("");
 
-    // Use a default location — in production this comes from the Mapbox pin.
+    // Use a default location. In production this comes from the Mapbox pin.
     // The field is required by the DB so we use a placeholder until Mapbox is wired.
     const res = await fetch("/api/civic", {
       method: "POST",
@@ -80,7 +80,7 @@ export default function CivicReportPage() {
       body: JSON.stringify({
         report_type: reportType,
         description: description.trim(),
-        lat: 40.7128, // placeholder — replaced by Mapbox draggable pin (Phase 1)
+        lat: 40.7128, // placeholder, replaced by Mapbox draggable pin (Phase 1)
         lng: -74.006,
         address: address.trim() || undefined,
         city: city.trim() || undefined,
@@ -393,7 +393,7 @@ export default function CivicReportPage() {
                 color: "var(--ink-3)",
               }}
             >
-              📍 <strong style={{ color: "var(--ink)" }}>Location pin</strong> — drag the map pin to
+              📍 <strong style={{ color: "var(--ink)" }}>Location pin</strong>. Drag the map pin to
               the exact location (coming once Mapbox token is configured).
             </div>
 
@@ -470,7 +470,7 @@ export default function CivicReportPage() {
               }}
             >
               {routed311
-                ? "We've sent this straight to your city's 311 system — no phone call needed."
+                ? "We've sent this straight to your city's 311 system. No phone call needed."
                 : "Your report has been saved. We'll route it to the city 311 system when the SeeClickFix integration is fully configured."}
             </p>
 

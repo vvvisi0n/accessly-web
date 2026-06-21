@@ -79,8 +79,8 @@ type Notes = Partial<Record<CheckpointKey, string>>;
 
 export default function ReviewFlowPage() {
   const router = useRouter();
-  const rawParams = useParams();
-  const venueId = rawParams.venueId as string;
+  const rawParams = useParams() ?? {};
+  const venueId = (rawParams as { venueId?: string }).venueId ?? "";
 
   const [step, setStep] = useState(0); // 0-4 = checkpoints, 5 = summary
   const [scores, setScores] = useState<Scores>({});
@@ -202,7 +202,7 @@ export default function ReviewFlowPage() {
           </span>
         </div>
 
-        {/* Progress bar — segmented */}
+        {/* Progress bar, segmented */}
         <div style={{ display: "flex", gap: 3, padding: "0 16px 12px" }}>
           {Array.from({ length: totalSteps }).map((_, i) => (
             <div
@@ -269,7 +269,7 @@ export default function ReviewFlowPage() {
               {current.sub}
             </p>
 
-            {/* Rating scale 1–5 */}
+            {/* Rating scale 1-5 */}
             <div style={{ display: "flex", gap: 8, marginBottom: "1.75rem" }}>
               {RATING_EMOJIS.map((emoji, i) => {
                 const val = i + 1;

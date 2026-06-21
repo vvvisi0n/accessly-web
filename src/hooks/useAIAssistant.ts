@@ -39,7 +39,7 @@ export function useAIAssistant() {
       } else if (data.error) {
         setMessages((m) => [
           ...m,
-          { role: "assistant", content: "Sorry—I'm having trouble right now." },
+          { role: "assistant", content: "Sorry, I'm having trouble right now." },
         ]);
       }
     } catch (e) {

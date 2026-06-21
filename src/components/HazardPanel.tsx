@@ -10,7 +10,7 @@ export default function HazardPanel({ reports }: { reports: CrowdReport[] }) {
         {reports.slice(0, 6).map((r) => (
           <li key={r.id} className="flex items-center justify-between">
             <span>
-              {r.type.replace("_", " ")} — {new Date(r.createdAt).toLocaleTimeString()}
+              {r.type.replace("_", " ")}, {new Date(r.createdAt).toLocaleTimeString()}
             </span>
             <span className="opacity-60">
               {r.lat.toFixed(3)}, {r.lng.toFixed(3)}

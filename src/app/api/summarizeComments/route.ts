@@ -4,11 +4,11 @@ import { OpenAI } from "openai";
 import { db } from "@/lib/firebase";
 import { collection, getDocs } from "firebase/firestore";
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
 
 export async function POST(req: NextRequest) {
+  const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
   const { reviewId } = await req.json();
 
   try {

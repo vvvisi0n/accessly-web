@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     supabase.rpc("increment_venue_review_count", { venue_id: body.venue_id }),
     supabase.rpc("increment_user_review_count", { user_id: user.id }),
   ]).catch(() => {
-    // RPC functions not available until migration is applied — non-fatal.
+    // RPC functions not available until migration is applied - non-fatal.
   });
 
   // ── Trigger Access Index recalculation ────────────────────────────────
@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
       },
     })
     .catch(() => {
-      // Edge function not deployed yet — non-fatal during local development.
+      // Edge function not deployed yet - non-fatal during local development.
     });
 
   return NextResponse.json({ review }, { status: 201 });

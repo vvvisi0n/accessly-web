@@ -8,11 +8,11 @@ import OpenAI from "openai";
  * It summarizes Stripe logs into clear, human-readable business insights.
  */
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY, // <-- Uses secure, server-side key
-});
 
 export async function POST(req: Request) {
+  const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY, // <-- Uses secure, server-side key
+});
   try {
     // Parse incoming request body
     const { events } = await req.json();

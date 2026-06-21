@@ -79,7 +79,7 @@ export default function StripeAnalytics() {
         <div className="bg-yellow-50 dark:bg-yellow-900/30 p-4 rounded-xl shadow-sm">
           <h3 className="text-sm text-gray-600 dark:text-gray-300">Last Update</h3>
           <p className="text-lg">
-            {events[0]?.createdAt?.toDate ? events[0].createdAt.toDate().toLocaleString() : "—"}
+            {events[0]?.createdAt?.toDate ? events[0].createdAt.toDate().toLocaleString() : "-"}
           </p>
         </div>
       </div>

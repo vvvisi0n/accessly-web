@@ -111,12 +111,12 @@ export default function VoiceNav({ places }: { places: NavPlace[] }) {
 
   useEffect(() => {
     if (env.noiseLevel > 80)
-      speak({ text: "It's quite noisy — I'll speak louder for clarity.", context: "alert" });
+      speak({ text: "It's quite noisy. I'll speak louder for clarity.", context: "alert" });
   }, [env.noiseLevel, speak]);
 
   useEffect(() => {
     if (env.weather && ["61", "63", "65"].includes(env.weather))
-      speak({ text: "It's raining — please be cautious on wet surfaces.", context: "alert" });
+      speak({ text: "It's raining. Please be cautious on wet surfaces.", context: "alert" });
   }, [env.weather, speak]);
 
   // 😊 Emotion Detection
@@ -176,9 +176,9 @@ export default function VoiceNav({ places }: { places: NavPlace[] }) {
     key: "accessana-route-cache",
     data: { places, nearbyPlaces },
     onRestore: () =>
-      speak({ text: "Connection restored — resuming navigation.", context: "normal" }),
+      speak({ text: "Connection restored. Resuming navigation.", context: "normal" }),
     onStatusChange: (online) =>
-      !online && speak({ text: "You’re offline — using saved route data.", context: "alert" }),
+      !online && speak({ text: "You’re offline. Using saved route data.", context: "alert" }),
   });
 
   // 🚧 Obstacle Avoidance
@@ -190,7 +190,7 @@ export default function VoiceNav({ places }: { places: NavPlace[] }) {
       speak({ text: `Obstacle detected: ${o.type}. Rerouting...`, context: "alert" });
       setTimeout(() => {
         setRerouting(false);
-        speak({ text: "New route ready — continuing.", context: "normal" });
+        speak({ text: "New route ready. Continuing.", context: "normal" });
       }, 5000);
     },
     onClear: () => !rerouting || speak({ text: "Obstacle cleared.", context: "normal" }),
@@ -204,7 +204,7 @@ export default function VoiceNav({ places }: { places: NavPlace[] }) {
     coords,
     onApproachingTurn: (s) => {
       setNextStep(s);
-      speak({ text: `Next turn coming up — ${s.summary}`, context: "approaching" });
+      speak({ text: `Next turn coming up. ${s.summary}`, context: "approaching" });
     },
     onHint: (hint) => speak({ text: hint, context: "normal" }),
   });
@@ -219,10 +219,10 @@ export default function VoiceNav({ places }: { places: NavPlace[] }) {
     motionActive,
     onSafetyChange: (state) => {
       if (state.safeMode) {
-        speak({ text: `Safety mode activated — ${state.reason}`, context: "alert" });
+        speak({ text: `Safety mode activated. ${state.reason}`, context: "alert" });
         pause();
       } else {
-        speak({ text: "Safety conditions normal — resuming guidance.", context: "normal" });
+        speak({ text: "Safety conditions normal. Resuming guidance.", context: "normal" });
         resume();
       }
     },
@@ -277,7 +277,7 @@ export default function VoiceNav({ places }: { places: NavPlace[] }) {
       <div
         className={`text-xs mb-2 ${isOnline ? "text-emerald-600" : "text-amber-600 animate-pulse"}`}
       >
-        {isOnline ? "🛰 Online — real-time guidance active" : "⚠ Offline — using cached routes"}
+        {isOnline ? "🛰 Online, real-time guidance active" : "⚠ Offline, using cached routes"}
       </div>
       {nextStep && (
         <div className="text-xs text-indigo-600 mb-2">
@@ -286,7 +286,7 @@ export default function VoiceNav({ places }: { places: NavPlace[] }) {
       )}
       {rerouting && (
         <div className="text-xs text-amber-600 bg-amber-50 border border-amber-300 rounded-md px-3 py-1 mb-2 animate-pulse">
-          🚧 Obstacle detected — rerouting…
+          🚧 Obstacle detected. Rerouting…
         </div>
       )}
 

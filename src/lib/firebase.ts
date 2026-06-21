@@ -1,8 +1,11 @@
-// src/lib/firebase.ts
+// Client-side Firebase SDK only.
+// firebase-admin (server-only) was removed from this file because it
+// cannot be bundled for the browser. If you need admin SDK access,
+// import from src/lib/firebase-admin.ts in server-only contexts (API routes,
+// Server Components) — never in "use client" files.
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
-import admin from "firebase-admin";
 
 const clientCreds = {
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
@@ -17,17 +20,4 @@ const app = getApps().length ? getApp() : initializeApp(clientCreds);
 const db = getFirestore(app);
 const storage = getStorage(app);
 
-// 🔥 Admin SDK (for server-side auth + NextAuth adapter)
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-    }),
-  });
-}
-
-const adminDb = admin.firestore();
-
-export { app, db, storage, adminDb };
+export { app, db, storage };

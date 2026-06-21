@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export const metadata: Metadata = {
   title: "Search accessible venues",
   description:
-    "Find restaurants, hotels, transit stops, parks, and more — filtered by disability type and rated by the Accessana Access Index.",
+    "Find restaurants, hotels, transit stops, parks, and more, filtered by disability type and rated by the Accessana Access Index.",
   openGraph: {
     title: "Search accessible venues · Accessana",
     description:

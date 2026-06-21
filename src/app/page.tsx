@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Accessana — Find places that work for you",
+  title: "Accessana: Find places that work for you",
   description:
     "Accessibility reviews from people with real needs. Search by disability type, read the Access Index, and know before you go.",
 };
@@ -16,7 +16,7 @@ const HOW_IT_WORKS = [
   {
     n: "2",
     title: "Read the Access Index",
-    body: "Every venue gets a score from 0 to 100 built from real user reviews — broken down across five checkpoints: entrance, bathrooms, parking, staff, and sensory.",
+    body: "Every venue gets a score from 0 to 100 built from real user reviews, broken down across five checkpoints: entrance, bathrooms, parking, staff, and sensory.",
   },
   {
     n: "3",
@@ -161,7 +161,7 @@ export default function HomePage() {
           Access Index, and know before you go.
         </p>
 
-        {/* Search bar — navigates to /search with ?q= */}
+        {/* Search bar, navigates to /search with ?q= */}
         <form action="/search" style={{ display: "flex", gap: 8, maxWidth: 480, margin: "0 auto" }}>
           <input
             name="q"
@@ -341,7 +341,7 @@ export default function HomePage() {
                 marginBottom: "1.5rem",
               }}
             >
-              The Access Index combines reviewer ratings across five checkpoints into a single 0–100
+              The Access Index combines reviewer ratings across five checkpoints into a single 0-100
               score. Recent reviews count more. Reviewers with a verified history are weighted
               higher.
             </p>

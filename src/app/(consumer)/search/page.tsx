@@ -1,10 +1,14 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { ScoreRing, scoreColor, scoreLabel } from "@/components/ui";
 import type { Venue, VenueCategory, DisabilityType } from "@/types";
+import { useGeolocation } from "@/hooks/useGeolocation";
+import { calculateDistanceMiles, formatDistanceMiles } from "@/lib/utils/distance";
 
 // ── Disability filter chips ───────────────────────────────────────────────
 const DISABILITY_CHIPS: { type: DisabilityType; emoji: string; label: string }[] = [
@@ -29,7 +33,13 @@ const CATEGORIES: { value: VenueCategory; label: string }[] = [
 ];
 
 // ── Venue card ────────────────────────────────────────────────────────────
-function VenueListCard({ venue }: { venue: Venue }) {
+function VenueListCard({
+  venue,
+  distanceMiles,
+}: {
+  venue: Venue;
+  distanceMiles: number | null;
+}) {
   const score = venue.access_index;
   return (
     <Link
@@ -86,6 +96,11 @@ function VenueListCard({ venue }: { venue: Venue }) {
         <div style={{ fontSize: "0.74rem", color: "var(--ink-3)", marginBottom: "0.5rem" }}>
           {venue.category?.replace(/_/g, " ")}
           {venue.city ? ` · ${venue.city}` : ""}
+          {distanceMiles !== null ? (
+            <span style={{ marginLeft: 6, color: "var(--blue)", fontWeight: 600 }}>
+              {formatDistanceMiles(distanceMiles)}
+            </span>
+          ) : null}
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <ScoreRing score={score} size="sm" />
@@ -106,6 +121,7 @@ function VenueListCard({ venue }: { venue: Venue }) {
 // ── Main ──────────────────────────────────────────────────────────────────
 export default function SearchPage() {
   const params = useSearchParams();
+  const [query, setQuery] = useState(params.get("q") ?? "");
   const [city, setCity] = useState(params.get("city") ?? "");
   const [activeTypes, setActiveTypes] = useState<DisabilityType[]>([]);
   const [activeCategory, setActiveCategory] = useState<VenueCategory | "">("");
@@ -114,9 +130,17 @@ export default function SearchPage() {
   const [venues, setVenues] = useState<Venue[]>([]);
   const [loading, setLoading] = useState(false);
 
+  const geo = useGeolocation();
+
+  // True when we have no way to infer location and the user hasn't given us one.
+  const hasFilters = !!(query || city || activeCategory || minScore > 0);
+  const noLocationContext =
+    (geo.status === "denied" || geo.status === "unavailable") && !hasFilters;
+
   const fetchVenues = useCallback(async () => {
     setLoading(true);
     const sp = new URLSearchParams();
+    if (query) sp.set("q", query);
     if (city) sp.set("city", city);
     if (activeCategory) sp.set("category", activeCategory);
     if (minScore > 0) sp.set("minScore", String(minScore));
@@ -126,7 +150,7 @@ export default function SearchPage() {
     const data = res?.ok ? await res.json().catch(() => ({})) : {};
     setVenues(data?.venues ?? []);
     setLoading(false);
-  }, [city, activeCategory, minScore]);
+  }, [query, city, activeCategory, minScore]);
 
   // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => {
@@ -163,8 +187,8 @@ export default function SearchPage() {
           flexShrink: 0,
         }}
       >
-        {/* Search input */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+        {/* Search inputs */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
           <Link
             href="/"
             style={{
@@ -188,10 +212,11 @@ export default function SearchPage() {
             </span>
           </Link>
           <input
-            value={city}
-            onChange={(e) => setCity(e.target.value)}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && fetchVenues()}
-            placeholder="City…"
+            placeholder="Search venues..."
+            aria-label="Search venues by name"
             style={{
               flex: 1,
               padding: "9px 14px",
@@ -222,8 +247,31 @@ export default function SearchPage() {
             {view === "map" ? "List" : "Map"}
           </button>
         </div>
+        {/* City filter — highlighted when we have no location context */}
+        <div style={{ marginBottom: 8 }}>
+          <input
+            value={city}
+            onChange={(e) => setCity(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && fetchVenues()}
+            placeholder={noLocationContext ? "Enter a city to find venues near you..." : "Filter by city..."}
+            aria-label="Filter by city"
+            style={{
+              width: "100%",
+              padding: "7px 14px",
+              borderRadius: "var(--radius-pill)",
+              border: noLocationContext ? "1.5px solid var(--blue)" : "1.5px solid var(--border)",
+              fontSize: "0.82rem",
+              color: "var(--ink)",
+              fontFamily: "var(--font-body)",
+              outline: "none",
+              background: noLocationContext ? "var(--blue-soft)" : "var(--surface)",
+              boxSizing: "border-box",
+              transition: "border-color 0.2s, background 0.2s",
+            }}
+          />
+        </div>
 
-        {/* Filter chips — with overflow collapse from design brief */}
+        {/* Filter chips, with overflow collapse from design brief */}
         <div
           style={{
             display: "flex",
@@ -354,36 +402,68 @@ export default function SearchPage() {
               }}
             >
               {loading ? (
-                "Searching…"
+                "Searching..."
+              ) : geo.status === "pending" ? (
+                "Finding your location..."
               ) : (
                 <>
                   <strong style={{ color: "var(--ink)" }}>
                     {filtered.length} place{filtered.length !== 1 ? "s" : ""}
                   </strong>
-                  {activeTypes.length > 0 ? ` matching your ${activeTypes.join(", ")} needs` : ""}
+                  {query ? ` matching "${query}"` : ""}
                   {city ? ` in ${city}` : ""}
+                  {geo.status === "granted" && !query && !city ? " near you" : ""}
                 </>
               )}
             </p>
 
-            {!loading && filtered.length === 0 && (
+            {!loading && filtered.length === 0 && noLocationContext && (
+              <div style={{ textAlign: "center", padding: "3rem 1rem", color: "var(--ink-3)" }}>
+                <p style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>📍</p>
+                <p
+                  style={{
+                    fontSize: "0.9rem",
+                    fontWeight: 700,
+                    color: "var(--ink)",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  Where should we look?
+                </p>
+                <p style={{ fontSize: "0.82rem", maxWidth: 280, margin: "0 auto 1rem" }}>
+                  Location access was denied. Type a city above to find accessible venues near you.
+                </p>
+              </div>
+            )}
+
+            {!loading && filtered.length === 0 && !noLocationContext && (
               <div style={{ textAlign: "center", padding: "3rem 1rem", color: "var(--ink-3)" }}>
                 <p style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🔍</p>
                 <p style={{ fontSize: "0.9rem", fontWeight: 600, marginBottom: "0.5rem" }}>
                   No venues found
                 </p>
-                <p style={{ fontSize: "0.82rem" }}>Try a different city or adjust your filters.</p>
+                <p style={{ fontSize: "0.82rem" }}>Try a different search term or adjust your filters.</p>
               </div>
             )}
 
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {filtered.map((v) => (
-                <VenueListCard key={v.id} venue={v} />
-              ))}
+              {filtered.map((v) => {
+                const distanceMiles =
+                  geo.status === "granted" &&
+                  geo.lat !== null &&
+                  geo.lng !== null &&
+                  v.lat !== null &&
+                  v.lng !== null
+                    ? calculateDistanceMiles(geo.lat, geo.lng, v.lat!, v.lng!)
+                    : null;
+                return (
+                  <VenueListCard key={v.id} venue={v} distanceMiles={distanceMiles} />
+                );
+              })}
             </div>
           </div>
         ) : (
-          /* Map view placeholder — real Mapbox integration in VenueMap component */
+          /* Map view placeholder, real Mapbox integration in VenueMap component */
           <div
             style={{
               flex: 1,

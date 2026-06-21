@@ -53,6 +53,7 @@ export type Database = {
           website: string | null;
           google_place_id: string | null;
           osm_id: string | null;
+          import_source: "osm" | "google_places" | null;
           access_index: number | null;
           score_entrance: number | null;
           score_bathrooms: number | null;
@@ -80,6 +81,7 @@ export type Database = {
           website?: string | null;
           google_place_id?: string | null;
           osm_id?: string | null;
+          import_source?: "osm" | "google_places" | null;
           access_index?: number | null;
           score_entrance?: number | null;
           score_bathrooms?: number | null;

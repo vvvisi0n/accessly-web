@@ -8,7 +8,7 @@ import { motion } from "framer-motion";
  * Animated bars that visualize AI voice output while speaking.
  *
  * Props:
- * - isSpeaking: boolean — whether the AI voice is currently playing
+ * - isSpeaking: boolean - whether the AI voice is currently playing
  */
 
 interface VoiceVisualizerProps {

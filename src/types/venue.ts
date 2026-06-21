@@ -29,10 +29,13 @@ export interface Venue {
   city: string;
   state: string;
   country: string;
-  location: { lat: number; lng: number };
+  lat: number | null;
+  lng: number | null;
   phone?: string;
   website?: string;
   google_place_id?: string;
+  osm_id?: string;
+  import_source?: "osm" | "google_places" | null;
   access_index: number | null;
   score_entrance: number | null;
   score_bathrooms: number | null;

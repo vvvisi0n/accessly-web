@@ -9,7 +9,7 @@ interface EmotionOptions {
 }
 
 /**
- * useEmotionDetection — estimates emotion from voice tone & interaction rhythm
+ * useEmotionDetection - estimates emotion from voice tone & interaction rhythm
  * Uses simple heuristics (pitch, volume, speaking pace) and touch speed.
  */
 export default function useEmotionDetection({ onEmotionChange }: EmotionOptions = {}) {

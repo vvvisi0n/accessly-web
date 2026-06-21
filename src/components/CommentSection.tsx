@@ -48,7 +48,7 @@ export default function CommentSection({ reviewId }: { reviewId: string }) {
       <h4 className="text-sm font-semibold mb-1">Comments</h4>
       {comments.map((comment) => (
         <div key={comment.id} className="mb-2 text-sm">
-          <strong>{comment.user}</strong> –{" "}
+          <strong>{comment.user}</strong>:{" "}
           <span className="text-gray-400 text-xs">
             {formatDistanceToNow(comment.createdAt.toDate())} ago
           </span>

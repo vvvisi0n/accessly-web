@@ -4,9 +4,9 @@ import nodemailer from "nodemailer";
 import { db } from "@/lib/firebase";
 import { collection, getDocs, orderBy, query, Timestamp } from "firebase/firestore";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function POST() {
+  const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
   try {
     // 1) Pull last 14 days of stripe_logs (simple fetch)
     const since = new Date();
@@ -36,7 +36,7 @@ export async function POST() {
     await transporter.sendMail({
       from: `"Accessana Pro" <${process.env.SMTP_FROM!}>`,
       to: process.env.SMTP_TO!,
-      subject: "Accessana Pro – Weekly Executive Summary",
+      subject: "Accessana Pro: Weekly Executive Summary",
       text: summary,
       html: `<pre style="font:14px/1.45 ui-monospace, SFMono-Regular, Menlo">${summary}</pre>`,
     });

@@ -34,7 +34,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       }));
     }
   } catch {
-    // Database not yet available — sitemap will only contain static routes.
+    // Database not yet available - sitemap will only contain static routes.
   }
 
   return [...staticRoutes, ...venueRoutes];

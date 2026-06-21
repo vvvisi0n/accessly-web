@@ -3,19 +3,21 @@ import { NextResponse } from "next/server";
 import { getFirestore } from "firebase-admin/firestore";
 import admin from "firebase-admin";
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.cert({
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
-    }),
-  });
-}
-
-const db = getFirestore();
-
 export async function GET() {
+  if (!process.env.FIREBASE_CLIENT_EMAIL || !process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID) {
+    return NextResponse.json({ success: false, error: "Firebase not configured" }, { status: 503 });
+  }
+  if (!admin.apps.length) {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
+      }),
+    });
+  }
+  const db = getFirestore();
+
   try {
     const ref = db.collection("test_connections").doc("health_check");
     await ref.set({
@@ -28,11 +30,11 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      message: "✅ Firebase Admin SDK connected successfully!",
+      message: "Firebase Admin SDK connected successfully.",
       data,
     });
   } catch (error: any) {
-    console.error("❌ Firebase test error:", error);
+    console.error("Firebase test error:", error);
     return NextResponse.json({
       success: false,
       error: error.message,

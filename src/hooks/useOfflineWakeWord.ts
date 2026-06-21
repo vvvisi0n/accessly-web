@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 
 /**
- * 💤 useOfflineWakeWord (Mock-compatible)
- * Works offline and simulates wake triggers for local testing.
- * This version skips Porcupine imports until a real key/model is used.
+ * Wake word detection hook.
+ * In production: uses Picovoice Porcupine with a real access key.
+ * Without a key: does nothing (no mock, no random interval).
+ * The Ana trigger FAB remains available for tap-to-activate.
  */
 export default function useOfflineWakeWord({
   onWake,
-  accessKey = "TEST_MODE_KEY",
+  accessKey = "",
   sensitivity = 0.7,
 }: {
   onWake: () => void;
@@ -20,31 +21,16 @@ export default function useOfflineWakeWord({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cleanup = () => {};
-    try {
-      if (!accessKey || accessKey === "TEST_MODE_KEY") {
-        console.warn("🧠 Running MOCK WAKE MODE — 'Hey Accessana' simulated locally.");
-        setActive(true);
-
-        const interval = setInterval(() => {
-          if (Math.random() > 0.75) {
-            console.log("🎯 Simulated wake trigger — Hey Accessana");
-            onWake();
-          }
-        }, 30000);
-
-        cleanup = () => clearInterval(interval);
-        return () => cleanup();
-      }
-
-      // Placeholder for real Porcupine setup (future use)
-      setActive(true);
-    } catch (e: any) {
-      console.error("Wake word error:", e);
-      setError(e.message || "Wake module failed to initialize");
+    // No valid key — skip entirely. Users can tap the FAB to activate Ana.
+    if (!accessKey) {
+      return;
     }
 
-    return () => cleanup();
+    // Placeholder for real Porcupine setup once PICOVOICE_ACCESS_KEY is provided.
+    setActive(true);
+    return () => {
+      setActive(false);
+    };
   }, [accessKey, sensitivity, onWake]);
 
   return { active, error };

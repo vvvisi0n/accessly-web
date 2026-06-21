@@ -37,7 +37,7 @@ export default function TripPlanViewer({ planData, onSelectPlace, highlightedPla
 
   return (
     <div className="mt-4 space-y-4">
-      <h3 className="text-lg font-semibold mb-2">🧭 Accessible Trip Plan — {planData.city}</h3>
+      <h3 className="text-lg font-semibold mb-2">🧭 Accessible Trip Plan: {planData.city}</h3>
 
       {/* Horizontal timeline */}
       <ItineraryTimeline

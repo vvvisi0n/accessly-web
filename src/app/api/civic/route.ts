@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
       user_id: user.id,
       report_type: body.report_type,
       description: body.description.trim(),
-      // PostGIS geography point — stored as WKT
+      // PostGIS geography point - stored as WKT
       location: `POINT(${body.lng} ${body.lat})`,
       address: body.address?.trim() ?? null,
       city: body.city?.trim() ?? null,
@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
         .eq("id", report.id);
     }
   } catch {
-    // SeeClickFix errors are non-fatal — the report is already saved locally.
+    // SeeClickFix errors are non-fatal - the report is already saved locally.
   }
 
   return NextResponse.json(

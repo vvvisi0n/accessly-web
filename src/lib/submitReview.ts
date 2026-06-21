@@ -37,7 +37,7 @@ export async function submitReview({
       const data = await res.json();
       aiAnalysis = data.analysis || null;
     }
-    const userLocation = { lat: 40.7128, lng: -74.006 }; // temporary — replace with actual user coordinates later
+    const userLocation = { lat: 40.7128, lng: -74.006 }; // temporary - replace with actual user coordinates later
 
     // ✅ 3. Store review + AI insights in Firestore
     await addDoc(collection(db, "reviews"), {

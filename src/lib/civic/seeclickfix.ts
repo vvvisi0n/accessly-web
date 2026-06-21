@@ -26,7 +26,7 @@ export class SeeClickFixError extends Error {
  * Submit a civic infrastructure report to SeeClickFix (city 311 routing).
  *
  * Returns the SeeClickFix issue ID on success.
- * Throws SeeClickFixError on failure — callers should catch and handle
+ * Throws SeeClickFixError on failure - callers should catch and handle
  * gracefully (the report is already saved locally in Supabase).
  *
  * Retries up to MAX_ATTEMPTS times with exponential backoff for
@@ -93,7 +93,7 @@ export async function submitCivicReport(issue: SeeClickFixIssue): Promise<string
         if (!err.retryable) throw err;
         lastError = err;
       } else {
-        // Network error (DNS failure, timeout, etc.) — retryable
+        // Network error (DNS failure, timeout, etc.) - retryable
         lastError = new SeeClickFixError(
           err instanceof Error ? err.message : "Network error",
           undefined,

@@ -25,6 +25,11 @@
   /* Civic (Track C) — never used outside civic screens */
   --civic: #dc2626;
 
+  /* Ana (voice AI companion) — indigo, never used on any other screen */
+  --ana: #6366F1;
+  --ana-soft: #EEF2FF;
+  --ana-dark: #4F46E5;
+
   /* Text */
   --ink: #0d0d0e;
   --ink-2: #3d3d40;
