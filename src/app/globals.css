@@ -74,6 +74,24 @@
   }
 }
 
+/* ── Ana keyframe animations ────────────────────────────────────────────── */
+/* Exact timing and easing from accessana-ana-voice-ui.html */
+
+@keyframes ana-pulse-ring {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50%       { opacity: 0.15; transform: scale(1.06); }
+}
+
+@keyframes ana-wave {
+  0%, 100% { transform: scaleY(0.5); opacity: 0.6; }
+  50%       { transform: scaleY(1); opacity: 1; }
+}
+
+@keyframes ana-think-bounce {
+  0%, 80%, 100% { transform: scale(0.7); opacity: 0.5; }
+  40%            { transform: scale(1); opacity: 1; }
+}
+
 /* ── Base ────────────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
